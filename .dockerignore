@@ -1,0 +1,9 @@
+*
+!/api
+!/core
+!/locales
+!/static
+!/Pipfile
+!/Pipfile.lock
+!/manage.py
+!/Dockerfile

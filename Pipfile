@@ -1,0 +1,40 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[requires]
+python_version = "3.9"
+
+[packages]
+Django = "==3.2.16"
+djangorestframework = "==3.14.0"
+django-environ = "==0.9.0"
+drf-spectacular = "==0.25.1"
+psycopg2-binary = "==2.9.5"
+gunicorn = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+
+[dev-packages]
+coverage = "*"
+
+[scripts]
+start = "gunicorn -k uvicorn.workers.UvicornWorker core.asgi:application"
+start-dev = "./manage.py runserver 0.0.0.0:8000"
+build = """sh -c '
+    ./manage.py compilemessages
+'
+"""
+build-dev = """sh -c '
+    ./manage.py compilemessages
+    ./manage.py migrate --no-input
+'
+"""
+test = """sh -c '
+    coverage run ./manage.py test
+    code=$?
+    coverage report -m
+    exit $code
+'
+"""
+migrate = "./manage.py migrate"

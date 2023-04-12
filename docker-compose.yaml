@@ -1,0 +1,42 @@
+version: '3.5'
+
+x-base: &base-backend
+  build:
+    target: base
+    context: .
+    args:
+      USER_ID: ${RUN_AS_USER:-1000}
+  env_file: ./.env
+  volumes:
+    - sovenvdata:/opt/venv
+    - ./:/app:delegated
+  networks:
+    - default
+  depends_on:
+    - postgres
+
+services:
+  app:
+    <<: *base-backend
+    hostname: template.service
+    ports:
+      - ${EXPOSE_APP_PORT:-8000}:8000
+    command: pipenv run start-dev
+
+  postgres:
+    image: postgres:15.1
+    ports:
+      - ${EXPOSE_POSTGRES_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: app
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - sopgdata:/var/lib/postgresql/data
+
+volumes:
+  sovenvdata:
+    driver: local
+  sopgdata:
+    driver: local
